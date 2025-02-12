@@ -4,7 +4,7 @@ import com.cibertec.blog.model.Comentario;
 import com.cibertec.blog.model.Publicacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.util.*;
 
 public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
     List<Comentario> findByPublicacion(Publicacion publicacion);
