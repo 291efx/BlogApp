@@ -2,6 +2,7 @@ package com.cibertec.blog.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,10 +16,12 @@ public class Publicacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String titulo;
 
     @Column(columnDefinition = "TEXT")
     private String contenido;
+
     private String imagenUrl;
 
     @ManyToOne
@@ -26,5 +29,11 @@ public class Publicacion {
     private Usuario usuario;
 
     @Column(name = "fecha_publicacion")
-    private LocalDateTime fechaPublicacion = LocalDateTime.now();
+    private LocalDateTime fechaPublicacion;
+
+    @PrePersist
+    protected void onCreate() {
+        this.fechaPublicacion = LocalDateTime.now();
+    }
 }
+
