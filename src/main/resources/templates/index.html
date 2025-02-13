@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - BlogApp</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+
+<!-- Header -->
+<div th:replace="fragments/header :: header"></div>
+
+<main class="main-content">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div th:replace="fragments/sidebar :: aside"></div>
+    </div>
+
+    <!-- Contenido principal -->
+    <section class="content">
+        <h2>Últimas Publicaciones</h2>
+        <div class="post-list">
+            <div th:each="post : ${publicaciones}" class="post-card">
+                <h3 th:text="${post.titulo}"></h3>
+                <p th:text="${post.resumen}"></p>
+                <a th:href="@{/publicacion/{id}(id=${post.id})}">Leer más</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<div th:replace="fragments/footer :: footer"></div>
 
 </body>
 </html>
