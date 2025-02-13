@@ -1,37 +1,31 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - BlogApp</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title>Inicio - Mi Blog</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
 
-<!-- Header -->
-<div th:replace="fragments/header :: header"></div>
+<header>
+    <h1>Mi Blog</h1>
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Inicio</a></li>
+            <li><a th:href="@{/login}">Iniciar Sesión</a></li>
+            <li><a th:href="@{/registro}">Registrarse</a></li>
+        </ul>
+    </nav>
+</header>
 
-<main class="main-content">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div th:replace="fragments/sidebar :: aside"></div>
-    </div>
-
-    <!-- Contenido principal -->
-    <section class="content">
-        <h2>Últimas Publicaciones</h2>
-        <div class="post-list">
-            <div th:each="post : ${publicaciones}" class="post-card">
-                <h3 th:text="${post.titulo}"></h3>
-                <p th:text="${post.resumen}"></p>
-                <a th:href="@{/publicacion/{id}(id=${post.id})}">Leer más</a>
-            </div>
-        </div>
-    </section>
+<main>
+    <h2>Bienvenido a Mi Blog</h2>
+    <p>Explora los últimos artículos y noticias.</p>
 </main>
 
-<!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
+<footer>
+    <p>&copy; 2025 Mi Blog</p>
+</footer>
 
 </body>
 </html>

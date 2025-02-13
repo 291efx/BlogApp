@@ -10,4 +10,5 @@ public interface PublicacionService {
     Optional<Publicacion> obtenerPublicacionPorId(Long id);
     List<Publicacion> listarPublicaciones();
     List<Publicacion> listarPublicacionesPorUsuario(Usuario usuario);
+
 }

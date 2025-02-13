@@ -1,39 +1,32 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Publicación</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title>Nueva Publicación</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
 
-<!-- Header -->
-<div th:replace="fragments/header :: header"></div>
+<header>
+    <h1>Mi Blog</h1>
+</header>
 
-<main class="form-container">
-    <h2 th:text="${publicacion.id == null ? 'Crear Publicación' : 'Editar Publicación'}">Formulario de Publicación</h2>
-
-    <form th:action="@{/publicaciones/guardar}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="id" th:value="${publicacion.id}">
-
+<main>
+    <h2>Crear Publicación</h2>
+    <form th:action="@{/guardarPublicacion}" method="post">
         <label for="titulo">Título:</label>
-        <input type="text" id="titulo" name="titulo" th:value="${publicacion.titulo}" required>
+        <input type="text" id="titulo" name="titulo" required>
 
         <label for="contenido">Contenido:</label>
-        <textarea id="contenido" name="contenido" rows="5" required th:text="${publicacion.contenido}"></textarea>
+        <textarea id="contenido" name="contenido" required></textarea>
 
-        <label for="imagen">Imagen:</label>
-        <input type="file" id="imagen" name="imagen">
-
-        <button type="submit">Guardar Publicación</button>
+        <button type="submit">Publicar</button>
     </form>
-
-    <a href="/publicaciones" class="btn-cancel">Cancelar</a>
 </main>
 
-<!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
+<footer>
+    <p>&copy; 2025 Mi Blog</p>
+</footer>
 
 </body>
 </html>

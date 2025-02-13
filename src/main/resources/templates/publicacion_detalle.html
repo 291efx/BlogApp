@@ -1,42 +1,28 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de Publicación</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title th:text="${publicacion.titulo}">Detalle de la Publicación</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
 
-<!-- Header -->
-<div th:replace="fragments/header :: header"></div>
+<header>
+    <h1>Mi Blog</h1>
+</header>
 
-<main class="detalle-container">
-    <div class="publicacion-detalle">
-        <h2 th:text="${publicacion.titulo}">Título de la Publicación</h2>
-        <p class="autor">Publicado por <span th:text="${publicacion.autor.nombre}">Autor</span> el <span th:text="${#temporals.format(publicacion.fecha, 'dd/MM/yyyy')}">Fecha</span></p>
-        <img th:if="${publicacion.imagenUrl}" th:src="@{${publicacion.imagenUrl}}" alt="Imagen de la Publicación" class="detalle-imagen">
-        <p class="contenido" th:text="${publicacion.contenido}">Contenido de la publicación...</p>
-    </div>
-
-    <section class="comentarios">
-        <h3>Comentarios</h3>
-
-        <div th:each="comentario : ${publicacion.comentarios}" class="comentario">
-            <p class="comentario-autor"><strong th:text="${comentario.autor.nombre}">Usuario</strong> comentó:</p>
-            <p class="comentario-texto" th:text="${comentario.contenido}">Contenido del comentario...</p>
-        </div>
-
-        <form th:action="@{/comentarios/agregar}" method="post" class="comentario-form">
-            <input type="hidden" name="publicacionId" th:value="${publicacion.id}">
-            <textarea name="contenido" placeholder="Escribe un comentario..." required></textarea>
-            <button type="submit">Comentar</button>
-        </form>
-    </section>
+<main>
+    <h2 th:text="${publicacion.titulo}"></h2>
+    <p><strong>Autor:</strong> <span th:text="${publicacion.autor}"></span></p>
+    <p><strong>Fecha:</strong> <span th:text="${publicacion.fecha}"></span></p>
+    <hr>
+    <p th:text="${publicacion.contenido}"></p>
+    <a th:href="@{/}">Volver al inicio</a>
 </main>
 
-<!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
+<footer>
+    <p>&copy; 2025 Mi Blog</p>
+</footer>
 
 </body>
 </html>
