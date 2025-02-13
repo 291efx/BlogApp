@@ -4,6 +4,7 @@ import com.cibertec.blog.model.Usuario;
 import com.cibertec.blog.repository.UsuarioRepository;
 import com.cibertec.blog.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,8 +15,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder; // Inyectamos el Bean de PasswordEncoder
+
     @Override
     public Usuario registrarUsuario(Usuario usuario) {
+        // Encriptamos la contraseña antes de guardarla
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
