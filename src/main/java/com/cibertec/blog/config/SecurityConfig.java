@@ -15,21 +15,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Deshabilita CSRF si usas API REST también
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/usuarios/registrar", "/login", "/css/**", "/js/**").permitAll() // Permitir acceso sin login
-                        .anyRequest().authenticated() // Todo lo demás requiere autenticación
+                        .requestMatchers("/", "/index", "/login", "/registro", "/publicacion_detalle", "/publicacion_form")
+                        .permitAll()  // Permite acceso sin autenticación a estas rutas
+                        .requestMatchers("/img/**", "/styles.css", "/script.js")
+                        .permitAll()  // Permite acceso a archivos estáticos
+                        .anyRequest().authenticated()  // Resto de rutas requieren autenticación
                 )
-                .formLogin(form -> form
-                        .loginPage("/login") // Ruta del formulario de login en HTML
-                        .defaultSuccessUrl("/index", true) // Redirigir a index.html tras login exitoso
+                .formLogin(login -> login
+                        .loginPage("/login")  // Página de inicio de sesión personalizada
+                        .defaultSuccessUrl("/index", true)  // Redirigir a index después de iniciar sesión
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout") // Redirige al login tras cerrar sesión
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
-                );
+                )
+                .csrf(csrf -> csrf.disable()); // Deshabilitar CSRF si es necesario
 
         return http.build();
     }
