@@ -16,23 +16,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/usuarios/registrar","/index", "/login", "/registro", "/publicacion_detalle", "/publicacion_form")
-                        .permitAll()  // Permite acceso sin autenticación a estas rutas
-                        .requestMatchers("/img/**", "/styles.css", "/script.js")
-                        .permitAll()  // Permite acceso a archivos estáticos
-                        .anyRequest().authenticated()  // Resto de rutas requieren autenticación
+                        .requestMatchers("/", "/registro", "/styles.css", "/login", "/error").permitAll() // Permitir acceso libre a estas rutas
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Acceso solo para ADMIN
+                        .requestMatchers("/publicacion/**").hasAnyRole("USER", "ADMIN") // Usuarios autenticados pueden ver publicaciones
+                        .anyRequest().authenticated() // Todo lo demás requiere autenticación
                 )
                 .formLogin(login -> login
-                        .loginPage("/login")  // Página de inicio de sesión personalizada
-                        .defaultSuccessUrl("/index", true)  // Redirigir a index después de iniciar sesión
+                        .loginPage("/login")  // Página de login
+                        .loginProcessingUrl("/procesarLogin")  // Procesamiento del login
+                        .defaultSuccessUrl("/", true)  // Redirigir al inicio tras login exitoso
+                        .failureUrl("/login?error=true")  // Manejo de error de autenticación
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/login?logout") // Redirigir a login tras cerrar sesión
                         .permitAll()
-                )
-                .csrf(csrf -> csrf.disable()); // Deshabilitar CSRF si es necesario
+                );
 
         return http.build();
     }
