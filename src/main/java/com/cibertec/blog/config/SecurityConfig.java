@@ -16,7 +16,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index", "/login", "/registro", "/publicacion_detalle", "/publicacion_form")
+                        .requestMatchers("/", "/usuarios/registrar","/index", "/login", "/registro", "/publicacion_detalle", "/publicacion_form")
                         .permitAll()  // Permite acceso sin autenticación a estas rutas
                         .requestMatchers("/img/**", "/styles.css", "/script.js")
                         .permitAll()  // Permite acceso a archivos estáticos
