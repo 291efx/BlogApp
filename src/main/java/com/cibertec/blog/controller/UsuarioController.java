@@ -3,9 +3,11 @@ package com.cibertec.blog.controller;
 import com.cibertec.blog.model.Usuario;
 import com.cibertec.blog.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +19,14 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @PostMapping("/registrar")
-    public ResponseEntity<Usuario> registrarUsuario(@RequestBody Usuario usuario) {
-        Usuario nuevoUsuario = usuarioService.registrarUsuario(usuario);
-        return ResponseEntity.ok(nuevoUsuario); // HTTP 200 OK con el usuario registrado
+    public ResponseEntity<?> registrarUsuario(@RequestBody Usuario usuario) {
+        try {
+            usuarioService.registrarUsuario(usuario);
+            return ResponseEntity.ok(Collections.singletonMap("mensaje", "Registro exitoso"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Error al registrar usuario"));
+        }
     }
 
     @GetMapping("/{id}")

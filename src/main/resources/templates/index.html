@@ -6,11 +6,26 @@
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
+
 <header>
-    <h1>Bienvenido a Mi Blog</h1>
+    <nav>
+        <h1>Mi Blog</h1>
+        <ul>
+            <li><a th:href="@{/}">Inicio</a></li>
+            <li><a th:href="@{/logout}">Cerrar Sesión</a></li>
+        </ul>
+    </nav>
 </header>
-<main>
-    <p>Has iniciado sesión correctamente.</p>
+
+<main class="welcome-container">
+    <h2>Bienvenido a Mi Blog</h2>
+
+    <p>Explora los artículos más recientes y participa en nuestra comunidad.</p>
 </main>
+
+<footer>
+    <p>&copy; 2025 Mi Blog. Todos los derechos reservados.</p>
+</footer>
+
 </body>
 </html>
