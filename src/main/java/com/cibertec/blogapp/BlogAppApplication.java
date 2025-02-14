@@ -1,4 +1,4 @@
-package com.cibertec.blog;
+package com.cibertec.blogapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

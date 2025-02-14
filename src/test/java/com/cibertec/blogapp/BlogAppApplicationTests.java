@@ -1,4 +1,4 @@
-package com.cibertec.blog;
+package com.cibertec.blogapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
