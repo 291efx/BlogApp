@@ -5,12 +5,16 @@ import com.cibertec.blogapp.model.Publicacion;
 import com.cibertec.blogapp.model.Usuario;
 import com.cibertec.blogapp.service.PublicacionService;
 import com.cibertec.blogapp.service.UsuarioService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,14 +83,26 @@ public class PublicacionController {
     @GetMapping("/{id}/archivo")
     public ResponseEntity<byte[]> descargarArchivo(@PathVariable Long id) {
         Publicacion publicacion = publicacionService.obtenerPorId(id);
+
         if (publicacion == null || publicacion.getArchivo() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=" + publicacion.getNombreArchivo())
-                .header("Content-Type", publicacion.getTipoArchivo())
-                .body(publicacion.getArchivo());
+        try {
+            // Asegurar que el nombre del archivo es seguro para los encabezados HTTP
+            String nombreArchivo = URLEncoder.encode(publicacion.getNombreArchivo(), StandardCharsets.UTF_8.toString());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDispositionFormData("attachment", nombreArchivo);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Tipo genérico para archivos binarios
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(publicacion.getArchivo());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // ✅ Eliminar publicación por ID
@@ -107,5 +123,11 @@ public class PublicacionController {
         dto.setFechaPublicacion(publicacion.getFechaPublicacion());
         dto.setUsuarioId(publicacion.getUsuario().getId());
         return dto;
+    }
+
+    @GetMapping("/usuario/{usuarioId}") // Nuevo endpoint
+    public ResponseEntity<List<Publicacion>> listarPorUsuario(@PathVariable Long usuarioId) {
+        List<Publicacion> publicaciones = publicacionService.obtenerPorUsuario(usuarioId);
+        return ResponseEntity.ok(publicaciones);
     }
 }

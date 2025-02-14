@@ -13,6 +13,10 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
 
     @Query("SELECT p.nombreArchivo FROM Publicacion p WHERE p.usuario.id = :usuarioId")
     List<String> findNombresArchivosByUsuarioId(@Param("usuarioId") Long usuarioId);
+
+    @Query("SELECT p FROM Publicacion p WHERE p.usuario.id = :usuarioId ORDER BY p.fechaPublicacion DESC")
+    List<Publicacion> findByUsuarioId(@Param("usuarioId") Long usuarioId);
+
 }
 
 

@@ -65,7 +65,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioDTO.setFechaRegistro(usuario.getFechaRegistro());
 
         // Aquí debes colocar la lógica real para obtener nombres de archivos
-        usuarioDTO.setNombresArchivos(List.of());
+        List<String> nombresArchivos = publicacionRepository.findNombresArchivosByUsuarioId(usuario.getId());
+        usuarioDTO.setNombresArchivos(nombresArchivos);
+
 
         return usuarioDTO;
     }

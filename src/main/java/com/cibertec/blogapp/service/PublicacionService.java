@@ -8,6 +8,7 @@ public interface PublicacionService {
     Publicacion guardar(Publicacion publicacion);
     Publicacion obtenerPorId(Long id);
     List<Publicacion> obtenerTodas();
+    List<Publicacion> obtenerPorUsuario(Long usuarioId); // Nuevo método
     void eliminar(Long id);
 }
 

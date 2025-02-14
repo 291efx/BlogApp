@@ -32,6 +32,10 @@ public class PublicacionServiceImpl implements PublicacionService {
     public List<Publicacion> obtenerTodas() {
         return publicacionRepository.findAll();
     }
+    @Override
+    public List<Publicacion> obtenerPorUsuario(Long usuarioId) {
+        return publicacionRepository.findByUsuarioId(usuarioId); // Usamos el método del repositorio
+    }
 
     @Override
     public void eliminar(Long id) {
