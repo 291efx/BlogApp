@@ -13,4 +13,5 @@ public class UsuarioDTO {
     private String email;
     private LocalDateTime fechaRegistro;
     private List<String> nombresArchivos;
+    private List<String> comentarios;
 }

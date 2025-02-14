@@ -14,7 +14,7 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false)
     private String contenido;
 
     @Column(name = "fecha_creacion", updatable = false)
