@@ -6,6 +6,7 @@ import com.cibertec.blog.repository.PublicacionRepository;
 import com.cibertec.blog.service.PublicacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -16,6 +17,7 @@ public class PublicacionServiceImpl implements PublicacionService {
     private PublicacionRepository publicacionRepository;
 
     @Override
+    @Transactional
     public Publicacion crearPublicacion(Publicacion publicacion) {
         return publicacionRepository.save(publicacion);
     }
