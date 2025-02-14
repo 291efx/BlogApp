@@ -71,4 +71,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return usuarioDTO;
     }
+    @Override
+    public void eliminarUsuario(Long id) {
+        usuarioRepository.deleteById(id);
+    }
+
 }

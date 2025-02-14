@@ -31,4 +31,11 @@ public class UsuarioController {
     public ResponseEntity<Usuario> registrarUsuario(@RequestBody Usuario usuario) {
         return ResponseEntity.ok(usuarioService.registrarUsuario(usuario));
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
+        usuarioService.eliminarUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

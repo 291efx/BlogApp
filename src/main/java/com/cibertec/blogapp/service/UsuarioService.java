@@ -10,5 +10,7 @@ public interface UsuarioService {
     Usuario registrarUsuario(Usuario usuario);
     UsuarioDTO obtenerPorId(Long id); // Cambiar de Usuario a UsuarioDTO
     Usuario obtenerEntidadPorId(Long id); // <-- Nuevo método
+    void eliminarUsuario(Long id);
+
 }
 
