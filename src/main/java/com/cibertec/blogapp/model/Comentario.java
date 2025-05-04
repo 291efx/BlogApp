@@ -1,13 +1,15 @@
 package com.cibertec.blogapp.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Setter
+@Entity
+@Table(name = "comentarios")
 public class Comentario {
 
     @Id
@@ -17,7 +19,7 @@ public class Comentario {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String contenido;
 
-    private LocalDateTime fechaCreacion = LocalDateTime.now();
+    private LocalDateTime fechaCreacion;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -27,5 +29,3 @@ public class Comentario {
     @JoinColumn(name = "publicacion_id", nullable = false)
     private Publicacion publicacion;
 }
-
-

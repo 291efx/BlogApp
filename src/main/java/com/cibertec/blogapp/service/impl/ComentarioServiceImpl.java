@@ -11,7 +11,9 @@ import com.cibertec.blogapp.service.ComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,41 +29,71 @@ public class ComentarioServiceImpl implements ComentarioService {
     private PublicacionRepository publicacionRepository;
 
     @Override
-    public List<ComentarioDTO> listarPorPublicacion(Long publicacionId) {
-        return comentarioRepository.findByPublicacionId(publicacionId).stream().map(comentario -> {
-            ComentarioDTO dto = new ComentarioDTO();
-            dto.setId(comentario.getId());
-            dto.setContenido(comentario.getContenido());
-            dto.setUsuarioId(comentario.getUsuario().getId());
-            dto.setPublicacionId(comentario.getPublicacion().getId());
-            return dto;
-        }).collect(Collectors.toList());
+    public ComentarioDTO crear(ComentarioDTO dto) {
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Publicacion publicacion = publicacionRepository.findById(dto.getPublicacionId())
+                .orElseThrow(() -> new RuntimeException("Publicación no encontrada"));
+
+        Comentario comentario = new Comentario();
+        comentario.setContenido(dto.getContenido());
+        comentario.setFechaCreacion(LocalDateTime.now());
+        comentario.setUsuario(usuario);
+        comentario.setPublicacion(publicacion);
+        Comentario guardado = comentarioRepository.save(comentario);
+
+        return mapToDTO(guardado);
     }
 
     @Override
-    public ComentarioDTO crearComentario(ComentarioDTO comentarioDTO) {
-        Long usuarioId = comentarioDTO.getUsuarioId() != null ? comentarioDTO.getUsuarioId().longValue() : null;
-        Long publicacionId = comentarioDTO.getPublicacionId() != null ? comentarioDTO.getPublicacionId().longValue() : null;
+    public List<ComentarioDTO> listarTodos() {
+        return comentarioRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
-        Usuario usuario = usuarioId != null ? usuarioRepository.findById(usuarioId).orElse(null) : null;
-        Publicacion publicacion = publicacionId != null ? publicacionRepository.findById(publicacionId).orElse(null) : null;
+    @Override
+    public Optional<ComentarioDTO> obtenerPorId(Long id) {
+        return comentarioRepository.findById(id)
+                .map(this::mapToDTO);
+    }
 
-        if (usuario == null || publicacion == null) return null;
+    @Override
+    public List<ComentarioDTO> listarPorPublicacion(Long publicacionId) {
+        return comentarioRepository.findByPublicacionId(publicacionId).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
-        Comentario comentario = new Comentario();
-        comentario.setContenido(comentarioDTO.getContenido());
-        comentario.setUsuario(usuario);
-        comentario.setPublicacion(publicacion);
+    @Override
+    public List<ComentarioDTO> listarPorUsuario(Long usuarioId) {
+        return comentarioRepository.findByUsuarioId(usuarioId).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
-        Comentario nuevo = comentarioRepository.save(comentario);
+    @Override
+    public ComentarioDTO actualizar(Long id, ComentarioDTO dto) {
+        Comentario comentario = comentarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+        comentario.setContenido(dto.getContenido());
+        // No cambiamos usuario o publicación
+        Comentario modificado = comentarioRepository.save(comentario);
+        return mapToDTO(modificado);
+    }
 
+    @Override
+    public void eliminar(Long id) {
+        comentarioRepository.deleteById(id);
+    }
+
+    private ComentarioDTO mapToDTO(Comentario c) {
         ComentarioDTO dto = new ComentarioDTO();
-        dto.setId(nuevo.getId());
-        dto.setContenido(nuevo.getContenido());
-        dto.setUsuarioId(usuario.getId());
-        dto.setPublicacionId(publicacion.getId());
-
+        dto.setId(c.getId());
+        dto.setContenido(c.getContenido());
+        dto.setFechaCreacion(c.getFechaCreacion());
+        dto.setUsuarioId(c.getUsuario().getId());
+        dto.setPublicacionId(c.getPublicacion().getId());
         return dto;
     }
 }
-

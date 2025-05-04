@@ -1,36 +1,33 @@
 package com.cibertec.blogapp.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Setter
+@Entity
+@Table(name = "publicaciones")
 public class Publicacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String titulo;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String contenido;
 
     private String nombreArchivo;
     private String tipoArchivo;
 
     @Lob
-    private byte[] archivo;
+    private String rutaArchivo;
 
-    private LocalDateTime fechaPublicacion = LocalDateTime.now();
+    private LocalDateTime fechaPublicacion;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 }
-
-

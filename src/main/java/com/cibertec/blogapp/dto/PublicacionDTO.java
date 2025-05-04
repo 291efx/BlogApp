@@ -1,6 +1,9 @@
 package com.cibertec.blogapp.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -10,8 +13,7 @@ public class PublicacionDTO {
     private String contenido;
     private String nombreArchivo;
     private String tipoArchivo;
-    private byte[] archivo;
-    private Long usuarioId;
+    private String rutaArchivo;
+    private LocalDateTime fechaPublicacion;
+    private UsuarioDTO usuario;
 }
-
-
