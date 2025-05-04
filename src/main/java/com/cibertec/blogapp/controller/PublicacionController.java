@@ -1,133 +1,46 @@
 package com.cibertec.blogapp.controller;
 
-import com.cibertec.blogapp.dto.PublicacionDTO;
 import com.cibertec.blogapp.model.Publicacion;
-import com.cibertec.blogapp.model.Usuario;
 import com.cibertec.blogapp.service.PublicacionService;
-import com.cibertec.blogapp.service.UsuarioService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/publicaciones")
+@CrossOrigin
 public class PublicacionController {
 
     private final PublicacionService publicacionService;
-    private final UsuarioService usuarioService;
 
-    public PublicacionController(PublicacionService publicacionService, UsuarioService usuarioService) {
+    public PublicacionController(PublicacionService publicacionService) {
         this.publicacionService = publicacionService;
-        this.usuarioService = usuarioService;
     }
 
-    // ✅ Registrar publicación con archivo
-    @PostMapping("/crear")  // Agrega una ruta específica
-    public ResponseEntity<PublicacionDTO> crearPublicacion(
-            @RequestParam("titulo") String titulo,
-            @RequestParam("contenido") String contenido,
-            @RequestParam("usuarioId") Long usuarioId,
-            @RequestParam(value = "archivo", required = false) MultipartFile archivo) throws IOException {
-
-        Usuario usuario = usuarioService.obtenerEntidadPorId(usuarioId);
-        if (usuario == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        Publicacion publicacion = new Publicacion();
-        publicacion.setTitulo(titulo);
-        publicacion.setContenido(contenido);
-        publicacion.setUsuario(usuario);
-
-        if (archivo != null && !archivo.isEmpty()) {
-            publicacion.setArchivo(archivo.getBytes());
-            publicacion.setNombreArchivo(archivo.getOriginalFilename());
-            publicacion.setTipoArchivo(archivo.getContentType());
-        }
-
-        publicacion = publicacionService.guardar(publicacion);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertirADTO(publicacion));
-    }
-
-    // ✅ Obtener todas las publicaciones
     @GetMapping
-    public ResponseEntity<List<PublicacionDTO>> obtenerPublicaciones() {
-        List<Publicacion> publicaciones = publicacionService.obtenerTodas();
-        List<PublicacionDTO> publicacionesDTO = publicaciones.stream()
-                .map(this::convertirADTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(publicacionesDTO);
+    public ResponseEntity<List<Publicacion>> listarTodas() {
+        return ResponseEntity.ok(publicacionService.obtenerTodas());
     }
 
-    // ✅ Obtener una publicación por ID
     @GetMapping("/{id}")
-    public ResponseEntity<PublicacionDTO> obtenerPublicacion(@PathVariable Long id) {
-        Publicacion publicacion = publicacionService.obtenerPorId(id);
-        if (publicacion == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(convertirADTO(publicacion));
+    public ResponseEntity<Publicacion> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(publicacionService.obtenerPorId(id));
     }
 
-    // ✅ Descargar archivo de una publicación
-    @GetMapping("/{id}/archivo")
-    public ResponseEntity<byte[]> descargarArchivo(@PathVariable Long id) {
-        Publicacion publicacion = publicacionService.obtenerPorId(id);
-
-        if (publicacion == null || publicacion.getArchivo() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        try {
-            // Asegurar que el nombre del archivo es seguro para los encabezados HTTP
-            String nombreArchivo = URLEncoder.encode(publicacion.getNombreArchivo(), StandardCharsets.UTF_8.toString());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentDispositionFormData("attachment", nombreArchivo);
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Tipo genérico para archivos binarios
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(publicacion.getArchivo());
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity<List<Publicacion>> listarPorUsuario(@PathVariable Long id) {
+        return ResponseEntity.ok(publicacionService.obtenerPorUsuario(id));
     }
 
-    // ✅ Eliminar publicación por ID
+    @PostMapping
+    public ResponseEntity<Publicacion> crear(@RequestBody Publicacion publicacion) {
+        return ResponseEntity.ok(publicacionService.crear(publicacion));
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarPublicacion(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         publicacionService.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    // ✅ Método para convertir a DTO
-    private PublicacionDTO convertirADTO(Publicacion publicacion) {
-        PublicacionDTO dto = new PublicacionDTO();
-        dto.setId(publicacion.getId());
-        dto.setTitulo(publicacion.getTitulo());
-        dto.setContenido(publicacion.getContenido());
-        dto.setNombreArchivo(publicacion.getNombreArchivo());
-        dto.setTipoArchivo(publicacion.getTipoArchivo());
-        dto.setFechaPublicacion(publicacion.getFechaPublicacion());
-        dto.setUsuarioId(publicacion.getUsuario().getId());
-        return dto;
-    }
-
-    @GetMapping("/usuario/{usuarioId}") // Nuevo endpoint
-    public ResponseEntity<List<Publicacion>> listarPorUsuario(@PathVariable Long usuarioId) {
-        List<Publicacion> publicaciones = publicacionService.obtenerPorUsuario(usuarioId);
-        return ResponseEntity.ok(publicaciones);
+        return ResponseEntity.ok().build();
     }
 }

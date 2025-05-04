@@ -1,4 +1,4 @@
-package com.cibertec.blogapp.service;
+package com.cibertec.blogapp.service.impl;
 
 import com.cibertec.blogapp.model.Publicacion;
 import com.cibertec.blogapp.repository.PublicacionRepository;
@@ -6,7 +6,6 @@ import com.cibertec.blogapp.service.PublicacionService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PublicacionServiceImpl implements PublicacionService {
@@ -18,23 +17,23 @@ public class PublicacionServiceImpl implements PublicacionService {
     }
 
     @Override
-    public Publicacion guardar(Publicacion publicacion) {
-        return publicacionRepository.save(publicacion);
+    public List<Publicacion> obtenerTodas() {
+        return publicacionRepository.findAll();
     }
 
     @Override
     public Publicacion obtenerPorId(Long id) {
-        Optional<Publicacion> publicacion = publicacionRepository.findById(id);
-        return publicacion.orElse(null);
+        return publicacionRepository.findById(id).orElse(null);
     }
 
     @Override
-    public List<Publicacion> obtenerTodas() {
-        return publicacionRepository.findAll();
-    }
-    @Override
     public List<Publicacion> obtenerPorUsuario(Long usuarioId) {
-        return publicacionRepository.findByUsuarioId(usuarioId); // Usamos el método del repositorio
+        return publicacionRepository.findByUsuarioId(usuarioId);
+    }
+
+    @Override
+    public Publicacion crear(Publicacion publicacion) {
+        return publicacionRepository.save(publicacion);
     }
 
     @Override
@@ -42,4 +41,6 @@ public class PublicacionServiceImpl implements PublicacionService {
         publicacionRepository.deleteById(id);
     }
 }
+
+
 

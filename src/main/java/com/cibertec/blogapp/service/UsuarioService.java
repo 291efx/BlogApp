@@ -7,10 +7,8 @@ import java.util.List;
 
 public interface UsuarioService {
     List<UsuarioDTO> listarUsuarios();
+    UsuarioDTO obtenerUsuarioPorId(Long id);
     Usuario registrarUsuario(Usuario usuario);
-    UsuarioDTO obtenerPorId(Long id); // Cambiar de Usuario a UsuarioDTO
-    Usuario obtenerEntidadPorId(Long id); // <-- Nuevo método
-    void eliminarUsuario(Long id);
-
 }
+
 
