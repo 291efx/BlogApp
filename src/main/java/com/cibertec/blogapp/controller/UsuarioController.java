@@ -4,6 +4,7 @@ package com.cibertec.blogapp.controller;
 import com.cibertec.blogapp.dto.UsuarioDTO;
 import com.cibertec.blogapp.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,13 @@ public class UsuarioController {
 
     /** Registra un nuevo usuario */
     @PostMapping("/registrar")
-    public ResponseEntity<UsuarioDTO> registrar(@RequestBody UsuarioDTO usuarioDTO) {
-        UsuarioDTO creado = usuarioService.registrarUsuario(usuarioDTO);
-        return ResponseEntity.ok(creado);
+    public ResponseEntity<UsuarioDTO> registrar(
+            @RequestBody UsuarioDTO dto   // <- ¡Fíjate aquí!
+    ) {
+        UsuarioDTO creado = usuarioService.registrarUsuario(dto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(creado);
     }
 
     /** Lista todos los usuarios */
