@@ -1,26 +1,16 @@
 package com.cibertec.blogapp.service;
 
-import com.cibertec.blogapp.dto.PublicacionDTO;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import com.cibertec.blogapp.model.Publicacion;
+import org.springframework.http.ResponseEntity;
 
 public interface PublicacionService {
 
-    PublicacionDTO crearConArchivo(String titulo,
-                                   String contenido,
-                                   Long usuarioId,
-                                   MultipartFile archivo);
-
-    List<PublicacionDTO> listarTodas();
-
-    Optional<PublicacionDTO> obtenerPorId(Long id);
-
-    void eliminar(Long id);
-
-    // ← NUEVOS
-    List<PublicacionDTO> listarPorUsuario(Long usuarioId);
-
-    PublicacionDTO actualizarPublicacion(Long id, PublicacionDTO datos);
+    ResponseEntity<?> crearPublicacion(String titulo, String contenido, MultipartFile archivo, Long usuarioId);
+    ResponseEntity<?> listarTodas();
+    ResponseEntity<?> obtenerPorId(Long id);
+    ResponseEntity<?> eliminar(Long id);
+    ResponseEntity<?> listarPorUsuario(Long usuarioId);
+    ResponseEntity<?> actualizar(Long id, Publicacion publicacion);
 }

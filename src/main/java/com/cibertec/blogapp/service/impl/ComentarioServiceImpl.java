@@ -1,6 +1,5 @@
 package com.cibertec.blogapp.service.impl;
 
-import com.cibertec.blogapp.dto.ComentarioDTO;
 import com.cibertec.blogapp.model.Comentario;
 import com.cibertec.blogapp.model.Publicacion;
 import com.cibertec.blogapp.model.Usuario;
@@ -9,91 +8,112 @@ import com.cibertec.blogapp.repository.PublicacionRepository;
 import com.cibertec.blogapp.repository.UsuarioRepository;
 import com.cibertec.blogapp.service.ComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ComentarioServiceImpl implements ComentarioService {
 
     @Autowired
-    private ComentarioRepository comentarioRepository;
+    private ComentarioRepository comentarioRepo;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepo;
 
     @Autowired
-    private PublicacionRepository publicacionRepository;
+    private PublicacionRepository publicacionRepo;
 
     @Override
-    public ComentarioDTO crear(ComentarioDTO dto) {
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Publicacion publicacion = publicacionRepository.findById(dto.getPublicacionId())
-                .orElseThrow(() -> new RuntimeException("Publicación no encontrada"));
+    public ResponseEntity<?> crear(Comentario comentario) {
+        Long usuarioId = comentario.getUsuario().getId();
+        Long publicacionId = comentario.getPublicacion().getId();
 
-        Comentario comentario = new Comentario();
-        comentario.setContenido(dto.getContenido());
+        Optional<Usuario> usuarioOpt = usuarioRepo.findById(usuarioId);
+        Optional<Publicacion> publicacionOpt = publicacionRepo.findById(publicacionId);
+
+        if (usuarioOpt.isEmpty() || publicacionOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Usuario o publicación no encontrada.");
+        }
+
+        comentario.setUsuario(usuarioOpt.get());
+        comentario.setPublicacion(publicacionOpt.get());
         comentario.setFechaCreacion(LocalDateTime.now());
-        comentario.setUsuario(usuario);
-        comentario.setPublicacion(publicacion);
-        Comentario guardado = comentarioRepository.save(comentario);
 
-        return mapToDTO(guardado);
+        Comentario guardado = comentarioRepo.save(comentario);
+        return ResponseEntity.status(201).body(guardado);
     }
 
     @Override
-    public List<ComentarioDTO> listarTodos() {
-        return comentarioRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public ResponseEntity<?> listarTodos() {
+        List<Comentario> comentarios = comentarioRepo.findAll();
+        return comentarios.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(comentarios);
     }
 
     @Override
-    public Optional<ComentarioDTO> obtenerPorId(Long id) {
-        return comentarioRepository.findById(id)
-                .map(this::mapToDTO);
+    public ResponseEntity<?> obtenerPorId(Long id) {
+        Optional<Comentario> comentarioOpt = comentarioRepo.findById(id);
+
+        if (comentarioOpt.isPresent()) {
+            // Si se encuentra el comentario, devolvemos 200 OK con el comentario
+            return ResponseEntity.ok(comentarioOpt.get());
+        } else {
+            // Si no se encuentra, devolvemos 404 Not Found
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<?> listarPorPublicacion(Long publicacionId) {
+        if (!publicacionRepo.existsById(publicacionId)) {
+            return ResponseEntity.badRequest().body("La publicación no existe.");
+        }
+
+        List<Comentario> comentarios = comentarioRepo.findByPublicacionId(publicacionId);
+        return comentarios.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(comentarios);
     }
 
     @Override
-    public List<ComentarioDTO> listarPorPublicacion(Long publicacionId) {
-        return comentarioRepository.findByPublicacionId(publicacionId).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public ResponseEntity<?> listarPorUsuario(Long usuarioId) {
+        if (!usuarioRepo.existsById(usuarioId)) {
+            return ResponseEntity.badRequest().body("El usuario no existe.");
+        }
+
+        List<Comentario> comentarios = comentarioRepo.findByUsuarioId(usuarioId);
+        return comentarios.isEmpty()?//es vacio? devuelve:
+        		ResponseEntity.noContent().build() : //caso contrario (no es vacio)
+        			ResponseEntity.ok(comentarios);
     }
 
     @Override
-    public List<ComentarioDTO> listarPorUsuario(Long usuarioId) {
-        return comentarioRepository.findByUsuarioId(usuarioId).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public ResponseEntity<?> actualizar(Long id, Comentario comentarioActualizado) {
+        Optional<Comentario> comentarioExistente = comentarioRepo.findById(id);
+        if (comentarioExistente.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Comentario original = comentarioExistente.get();
+        original.setContenido(comentarioActualizado.getContenido());
+
+        Comentario actualizado = comentarioRepo.save(original);
+        return ResponseEntity.ok(actualizado);
     }
 
     @Override
-    public ComentarioDTO actualizar(Long id, ComentarioDTO dto) {
-        Comentario comentario = comentarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
-        comentario.setContenido(dto.getContenido());
-        // No cambiamos usuario o publicación
-        Comentario modificado = comentarioRepository.save(comentario);
-        return mapToDTO(modificado);
-    }
+    public ResponseEntity<?> eliminar(Long id) {
+        if (!comentarioRepo.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
 
-    @Override
-    public void eliminar(Long id) {
-        comentarioRepository.deleteById(id);
-    }
-
-    private ComentarioDTO mapToDTO(Comentario c) {
-        ComentarioDTO dto = new ComentarioDTO();
-        dto.setId(c.getId());
-        dto.setContenido(c.getContenido());
-        dto.setFechaCreacion(c.getFechaCreacion());
-        dto.setUsuarioId(c.getUsuario().getId());
-        dto.setPublicacionId(c.getPublicacion().getId());
-        return dto;
+        comentarioRepo.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

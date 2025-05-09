@@ -1,16 +1,14 @@
 package com.cibertec.blogapp.service;
 
-import com.cibertec.blogapp.dto.ComentarioDTO;
-
-import java.util.List;
-import java.util.Optional;
+import com.cibertec.blogapp.model.Comentario;
+import org.springframework.http.ResponseEntity;
 
 public interface ComentarioService {
-    ComentarioDTO crear(ComentarioDTO comentarioDTO);
-    List<ComentarioDTO> listarTodos();
-    Optional<ComentarioDTO> obtenerPorId(Long id);
-    List<ComentarioDTO> listarPorPublicacion(Long publicacionId);
-    List<ComentarioDTO> listarPorUsuario(Long usuarioId);
-    ComentarioDTO actualizar(Long id, ComentarioDTO comentarioDTO);
-    void eliminar(Long id);
+    ResponseEntity<?> crear(Comentario comentario);
+    ResponseEntity<?> listarTodos();
+    ResponseEntity<?> obtenerPorId(Long id);
+    ResponseEntity<?> listarPorPublicacion(Long publicacionId);
+    ResponseEntity<?> listarPorUsuario(Long usuarioId);
+    ResponseEntity<?> actualizar(Long id, Comentario comentario);
+    ResponseEntity<?> eliminar(Long id);
 }

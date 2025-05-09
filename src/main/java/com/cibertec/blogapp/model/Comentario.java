@@ -16,7 +16,6 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String contenido;
 
     private LocalDateTime fechaCreacion;
