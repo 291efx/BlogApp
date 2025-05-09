@@ -1,18 +1,13 @@
 package com.cibertec.blogapp.service;
 
-import com.cibertec.blogapp.dto.UsuarioDTO;
+import com.cibertec.blogapp.model.Usuario;
+import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 
 public interface UsuarioService {
-
-    UsuarioDTO registrarUsuario(UsuarioDTO usuarioDTO);
-
-    List<UsuarioDTO> listarUsuarios();
-
-    UsuarioDTO obtenerPorId(Long id);
-
-    UsuarioDTO actualizarUsuario(Long id, UsuarioDTO usuarioDTO);
-
-    void eliminarUsuario(Long id);
+    ResponseEntity<?> registrar(Usuario usuario);
+    ResponseEntity<?> listar();
+    ResponseEntity<?> obtenerPorId(Long id);
+    ResponseEntity<?> actualizar(Long id, Usuario usuario);
+    ResponseEntity<?> eliminar(Long id);
 }

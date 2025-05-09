@@ -21,8 +21,6 @@ public class Publicacion {
 
     private String nombreArchivo;
     private String tipoArchivo;
-
-    @Lob
     private String rutaArchivo;
 
     private LocalDateTime fechaPublicacion;
