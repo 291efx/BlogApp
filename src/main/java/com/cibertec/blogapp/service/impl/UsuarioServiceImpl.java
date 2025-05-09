@@ -27,7 +27,7 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 	// AUTENTICACIÓN PARA SPRING SECURITY
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		return usuarioRepo.findByUsername(email).map(user -> new User(user.getEmail(), user.getPassword(),
+		return usuarioRepo.findByEmail(email).map(user -> new User(user.getEmail(), user.getPassword(),
 				Collections.singleton(() -> "ROLE_" + user.getRol()) // prefijo obligatorio
 		)).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
 	}
