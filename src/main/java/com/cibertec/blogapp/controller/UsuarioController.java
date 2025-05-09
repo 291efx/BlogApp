@@ -1,9 +1,11 @@
 package com.cibertec.blogapp.controller;
 
 import com.cibertec.blogapp.model.Usuario;
-import com.cibertec.blogapp.service.UsuarioService;
+import com.cibertec.blogapp.service.impl.UsuarioServiceImpl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -13,13 +15,19 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioServiceImpl usuarioService;
 
     /** Registra un nuevo usuario */
     @PostMapping("/registrar")
     public ResponseEntity<?> registrar(@RequestBody Usuario usuario) {
         return usuarioService.registrar(usuario); 
     }
+    
+    @GetMapping("/me")
+    public ResponseEntity<?> getUsuarioAutenticado(Authentication auth) {
+    	return usuarioService.getUsuarioAutenticado(auth);
+    }
+    
 
     /** Lista todos los usuarios */
     @GetMapping

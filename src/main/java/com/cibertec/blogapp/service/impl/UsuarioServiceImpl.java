@@ -7,10 +7,12 @@ import com.cibertec.blogapp.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +25,8 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepo;
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 
 	// AUTENTICACIÓN PARA SPRING SECURITY
 	@Override
@@ -34,9 +38,10 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
 	// REGISTRAR USUARIO
 	public ResponseEntity<?> registrar(Usuario usuario) {
-		usuario.setFechaRegistro(LocalDateTime.now());
-		Usuario guardado = usuarioRepo.save(usuario);
-		return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+	    usuario.setFechaRegistro(LocalDateTime.now());
+	    usuario.setPassword(encoder.encode(usuario.getPassword())); // ENCRIPTADO
+	    Usuario guardado = usuarioRepo.save(usuario);
+	    return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
 	}
 
 	// LISTAR TODOS LOS USUARIOS
@@ -85,4 +90,14 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 		usuarioRepo.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+	
+	
+	public ResponseEntity<?> getUsuarioAutenticado(Authentication auth) {
+	    String email = auth.getName();
+	    Optional<Usuario> usuario = usuarioRepo.findByEmail(email);
+	    return usuario.map(ResponseEntity::ok)
+	                  .orElse(ResponseEntity.notFound().build());
+	}
+
+	
 }

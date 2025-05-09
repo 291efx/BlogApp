@@ -1,7 +1,7 @@
 package com.cibertec.blogapp.controller;
 
 import com.cibertec.blogapp.model.Publicacion;
-import com.cibertec.blogapp.service.PublicacionService;
+import com.cibertec.blogapp.service.impl.PublicacionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PublicacionController {
 
     @Autowired
-    private PublicacionService publicacionService;
+    private PublicacionServiceImpl publicacionService;
 
     /** Crear publicación con archivo */
     @PostMapping("/crear")
