@@ -19,10 +19,14 @@ public class Publicacion {
     private String titulo;
     private String contenido;
 
+    @Column(name="nombre_archivo")
     private String nombreArchivo;
+    @Column(name="tipo_archivo")
     private String tipoArchivo;
+    @Column(name="ruta_archivo")
     private String rutaArchivo;
 
+    @Column(name="fecha_publicacion")
     private LocalDateTime fechaPublicacion;
 
     @ManyToOne

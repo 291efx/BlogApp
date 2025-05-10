@@ -58,6 +58,17 @@ public class PublicacionController {
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         return publicacionService.eliminar(id);
     }
+    
+    @PutMapping("/editar-con-archivo/{id}")
+    public ResponseEntity<?> actualizarConArchivo(
+            @PathVariable Long id,
+            @RequestParam String titulo,
+            @RequestParam String contenido,
+            @RequestParam(required = false) MultipartFile archivo
+    ) {
+        return publicacionService.actualizarConArchivo(id, titulo, contenido, archivo);
+    }
+    
 
     /** Descargar archivo de una publicación 
     @GetMapping("/descargar/{filename:.+}")

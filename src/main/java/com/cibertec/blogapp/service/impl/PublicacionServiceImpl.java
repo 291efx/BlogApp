@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PublicacionServiceImpl implements PublicacionService{
@@ -107,6 +108,33 @@ public class PublicacionServiceImpl implements PublicacionService{
         }
     }
 
+    public ResponseEntity<?> actualizarConArchivo(Long id, String titulo, String contenido, MultipartFile archivo) {
+        Optional<Publicacion> optional = publicacionRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publicación no encontrada");
+        }
+
+        Publicacion pub = optional.get();
+        pub.setTitulo(titulo);
+        pub.setContenido(contenido);
+
+        if (archivo != null && !archivo.isEmpty()) {
+            // guardar archivo en el disco y actualizar ruta
+            String nuevaRuta = null;
+			try {
+				nuevaRuta = guardarArchivo(archivo);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+            pub.setRutaArchivo("uploads/"+nuevaRuta);
+        }
+
+        publicacionRepository.save(pub);
+        return ResponseEntity.ok(pub);
+    }
+
+    
     // Método auxiliar para guardar el archivo
     private String guardarArchivo(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
